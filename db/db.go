@@ -947,7 +947,7 @@ func Insert_card(one_time_code string, k0_auth_key string, k2_cmac_key string, k
 	sqlStatement := `UPDATE cards SET` +
 		` lnurlw_enable = 'N', lnurlp_enable = 'N', email_enable = 'N', wiped = 'Y'` +
 		` WHERE card_name = $1;`
-	res, err := db.Exec(sqlStatement, card_name)
+	_, err = db.Exec(sqlStatement, card_name)
 	if err != nil {
 		return err
 	}
@@ -959,7 +959,7 @@ func Insert_card(one_time_code string, k0_auth_key string, k2_cmac_key string, k
 		` lnurlw_request_timeout_sec, tx_limit_sats, day_limit_sats, lnurlw_enable,` +
 		` one_time_code_used, card_name, uid_privacy, allow_negative_balance)` +
 		` VALUES ($1, $2, $3, $4, $5, '', 0, 60, $6, $7, $8, 'N', $9, $10, $11);`
-	res, err = db.Exec(sqlStatement, one_time_code, k0_auth_key, k2_cmac_key, k3, k4,
+	res, err := db.Exec(sqlStatement, one_time_code, k0_auth_key, k2_cmac_key, k3, k4,
 		tx_limit_sats, day_limit_sats, lnurlw_enable_yn, card_name, uid_privacy_yn,
 		allow_neg_bal_yn)
 	if err != nil {
@@ -1011,7 +1011,7 @@ func Insert_card_with_pin(one_time_code string, k0_auth_key string, k2_cmac_key 
 	sqlStatement := `UPDATE cards SET` +
 		` lnurlw_enable = 'N', lnurlp_enable = 'N', email_enable = 'N', wiped = 'Y'` +
 		` WHERE card_name = $1;`
-	res, err := db.Exec(sqlStatement, card_name)
+	_, err = db.Exec(sqlStatement, card_name)
 	if err != nil {
 		return err
 	}
@@ -1024,7 +1024,7 @@ func Insert_card_with_pin(one_time_code string, k0_auth_key string, k2_cmac_key 
 		` one_time_code_used, card_name, uid_privacy, allow_negative_balance,` +
 		` pin_enable, pin_number, pin_limit_sats)` +
 		` VALUES ($1, $2, $3, $4, $5, '', 0, 60, $6, $7, $8, 'N', $9, $10, $11, $12, $13, $14);`
-	res, err = db.Exec(sqlStatement, one_time_code, k0_auth_key, k2_cmac_key, k3, k4,
+	res, err := db.Exec(sqlStatement, one_time_code, k0_auth_key, k2_cmac_key, k3, k4,
 		tx_limit_sats, day_limit_sats, lnurlw_enable_yn, card_name, uid_privacy_yn,
 		allow_neg_bal_yn, pin_enable_yn, pin_number, pin_limit_sats)
 	if err != nil {
