@@ -39,7 +39,7 @@ func (dat *Dashboard_data) getdashboarddata() {
 	cards, err := db.Get_all_cards()
 	if err != nil {
 		msg := "dashboard: Can not get cards data"
-		log.Warn(msg)
+		log.Warn(msg, err)
 		return
 	}
 	dat.Stats_data = map[string]int{
@@ -61,12 +61,12 @@ func (dat *Dashboard_data) getdashboarddata() {
 			"lnurlw_request_timeout_sec": strconv.Itoa(card.Lnurlw_request_timeout_sec),
 			"tx_limit_sats":              strconv.Itoa(card.Tx_limit_sats),
 			"day_limit_sats":             strconv.Itoa(card.Day_limit_sats),
-			"lnurlp_enable":              card.Lnurlp_enable,
-			"email_address":              card.Email_address,
-			"email_enable":               card.Email_enable,
-			"allow_negative_balance":     card.Allow_negative_balance,
 			"pin_enable":                 card.Pin_enable,
 			"pin_limit_sats":             strconv.Itoa(card.Pin_limit_sats),
+			"lnurlp_enable":              card.Lnurlp_enable,
+			"email_enable":               card.Email_enable,
+			"email_address":              card.Email_address,
+			"allow_negative_balance":     card.Allow_negative_balance,
 			"wiped":                      card.Wiped,
 		}
 		dat.Cards_data = append(dat.Cards_data, c)

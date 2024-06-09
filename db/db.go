@@ -4,8 +4,10 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	_ "github.com/lib/pq"
 	"os"
+	"time"
+
+	_ "github.com/lib/pq"
 )
 
 type Card struct {
@@ -32,13 +34,31 @@ type Card struct {
 	Pin_enable                 string
 	Pin_number                 string
 	Pin_limit_sats             int
+	Wiped                      string
 }
 
 type Payment struct {
-	Card_payment_id int
-	Card_id         int
-	Lnurlw_k1       string
-	Paid_flag       string
+	Card_payment_id     int
+	Card_id             int
+	Lnurlw_k1           string
+	Lnurlw_request_time time.Time
+	Ln_invoice          string
+	Amount_msats        int64
+	Paid_flag           string
+	Payment_time        time.Time
+	Payment_status      string
+	Failure_reason      string
+	Payment_status_time time.Time
+}
+
+type Deposit struct {
+	Card_receipt_id     int
+	Card_id             int
+	Ln_invoice          string
+	R_hash_hex          string
+	Amount_msat         int64
+	Receipt_status      string
+	Receipt_status_time time.Time
 }
 
 type Transaction struct {
@@ -411,6 +431,123 @@ func Get_card_from_card_name(card_name string) (*Card, error) {
 	}
 
 	return &c, nil
+}
+
+func Get_all_cards() ([]Card, error) {
+
+	cards := []Card{}
+	db, err := open()
+	if err != nil {
+		return cards, err
+	}
+	defer db.Close()
+
+	sqlStatement := `SELECT card_id, card_name, uid,` +
+		` last_counter_value, lnurlw_enable, lnurlw_request_timeout_sec,` +
+		` tx_limit_sats, day_limit_sats, pin_enable, pin_limit_sats,` +
+		` lnurlp_enable, email_enable, email_address,` +
+		` allow_negative_balance, wiped FROM cards;`
+
+	rows, err := db.Query(sqlStatement)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		card := Card{}
+		err := rows.Scan(&card.Card_id, &card.Card_name, &card.Db_uid,
+			&card.Last_counter_value, &card.Lnurlw_enable,
+			&card.Lnurlw_request_timeout_sec, &card.Tx_limit_sats,
+			&card.Day_limit_sats, &card.Pin_enable, &card.Pin_limit_sats,
+			&card.Lnurlp_enable, &card.Email_enable, &card.Email_address,
+			&card.Allow_negative_balance, &card.Wiped)
+		if err != nil {
+			return cards, err
+		}
+		cards = append(cards, card)
+	}
+	err = rows.Err()
+	if err != nil {
+		return cards, err
+	}
+	return cards, nil
+}
+
+func Get_all_payment() ([]Payment, error) {
+
+	payments := []Payment{}
+	db, err := open()
+	if err != nil {
+		return payments, err
+	}
+	defer db.Close()
+
+	sqlStatement := `SELECT card_payment_id, card_id, lnurlw_k1,` +
+		` lnurlw_request_time, ln_invoice, amount_msats, paid_flag,` +
+		` payment_time, payment_status, failure_reason` +
+		` payment_status_time FROM card_payments;`
+
+	rows, err := db.Query(sqlStatement)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		payment := Payment{}
+		err := rows.Scan(&payment.Card_payment_id, &payment.Card_id,
+			&payment.Lnurlw_k1, &payment.Lnurlw_request_time,
+			&payment.Ln_invoice, &payment.Amount_msats, &payment.Paid_flag,
+			&payment.Payment_time, &payment.Payment_status,
+			&payment.Failure_reason, &payment.Payment_status_time)
+		if err != nil {
+			return payments, err
+		}
+		payments = append(payments, payment)
+	}
+	err = rows.Err()
+	if err != nil {
+		return payments, err
+	}
+	return payments, nil
+}
+
+func Get_all_deposit() ([]Deposit, error) {
+
+	deposits := []Deposit{}
+	db, err := open()
+	if err != nil {
+		return deposits, err
+	}
+	defer db.Close()
+
+	sqlStatement := `SELECT card_receipt_id, card_id, ln_invoice,` +
+		` r_hash_hex, amount_msats, receipt_status,` +
+		` receipt_status_time FROM card_receipts;`
+
+	rows, err := db.Query(sqlStatement)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		deposit := Deposit{}
+		err := rows.Scan(&deposit.Card_receipt_id, &deposit.Card_id,
+			&deposit.Ln_invoice, &deposit.R_hash_hex,
+			&deposit.Amount_msat, &deposit.Receipt_status,
+			&deposit.Receipt_status_time)
+		if err != nil {
+			return deposits, err
+		}
+		deposits = append(deposits, deposit)
+	}
+	err = rows.Err()
+	if err != nil {
+		return deposits, err
+	}
+	return deposits, nil
 }
 
 func Check_lnurlw_timeout(card_payment_id int) (bool, error) {

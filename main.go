@@ -59,7 +59,6 @@ func main() {
 	internal_router.Path("/updateboltcardwithpin").Methods("GET").HandlerFunc(internalapi.Updateboltcardwithpin)
 	internal_router.Path("/wipeboltcard").Methods("GET").HandlerFunc(internalapi.Wipeboltcard)
 	internal_router.Path("/getboltcard").Methods("GET").HandlerFunc(internalapi.Getboltcard)
-	internal_router.Path("/getallboltcards").Methods("GET").HandlerFunc(internalapi.Getallboltcards)
 
 	port := db.Get_setting("HOST_PORT")
 	if port == "" {
