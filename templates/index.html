@@ -22,39 +22,13 @@
 <div class="holder">
     <div class="container32">
         <div class="logo">
-            {{.Template_data.Xml_prolog}}
-            <svg width="187px" height="49px" viewBox="0 0 187 49" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                <title>boltcard-logo</title>
-                <defs>
-                    <filter x="-26.2%" y="-25.6%" width="152.5%" height="151.2%" filterUnits="objectBoundingBox" id="filter-1">
-                        <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
-                        <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
-                        <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.109702797 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
-                        <feMerge>
-                            <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
-                            <feMergeNode in="SourceGraphic"></feMergeNode>
-                        </feMerge>
-                    </filter>
-                    <linearGradient x1="50%" y1="2.83824061%" x2="50%" y2="100%" id="linearGradient-2">
-                        <stop stop-color="#174697" offset="0%"></stop>
-                        <stop stop-color="#0C2550" offset="100%"></stop>
-                    </linearGradient>
-                    <linearGradient x1="50%" y1="0%" x2="50%" y2="97.8843027%" id="linearGradient-3">
-                        <stop stop-color="#3F78DC" offset="0%"></stop>
-                        <stop stop-color="#2F5FB3" offset="100%"></stop>
-                    </linearGradient>
-                    <linearGradient x1="50%" y1="2.72534321%" x2="50%" y2="100%" id="linearGradient-4">
-                        <stop stop-color="#8BD7F9" offset="0%"></stop>
-                        <stop stop-color="#68BBE1" offset="100%"></stop>
-                    </linearGradient>
-                </defs>
-                <div id="BoltCard" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                    <img style="float:left; margin-right:20px;" width="80" src="../static/img/bolt-card-icon.png"/>
-                    <h1>BOLT CARD Service</h1>
-                </div>
-                <div style="margin-top: 20px; display: flex; flex-wrap: wrap;">
-                </div>
-            </svg>
+            <title>boltcard-logo</title>
+            <div id="BoltCard" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                <img style="float:left; margin-right:20px;" width="80" src="../static/img/bolt-card-icon.png"/>
+                <h1>BOLT CARD Service</h1>
+            </div>
+            <div style="margin-top: 20px; display: flex; flex-wrap: wrap;">
+            </div>
         </div>
         <div class="scroll">
         <div class="boxes">
@@ -137,6 +111,32 @@
                             <th>Transactions ID</th>
                             <th>Transactions Amount</th>
                             <th>Transactions Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{range .Transactions_data}}
+                        <tr>
+                            <td>{{.card_name}}</td>
+                            <td>{{.card_id}}</td>
+                            <td>{{.tx_type}}</td>
+                            <td>{{.tx_amount_sats}} sats</td>
+                            <td>{{.tx_time}}</td>
+                        </tr>
+                        {{else}}<tr><td style="align-self: center;" colspan="5">No cards Transactions in the database</td></tr> {{end}}
+                    </tbody>
+            </table>
+        </div>
+
+        <h3>Payments</h3>
+        <div class="box container16">
+            <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Card Name</th>
+                            <th>Payment ID</th>
+                            <th>Invoice</th>
+                            <th>Amount</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
