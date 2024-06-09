@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <style type="text/css">
+        @charset "UTF-8";
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta content="http://hub.boltcardwallet.com" property="og:url">
+    <meta content="BoltCard" property="og:title">
+    <meta content="BoltCardWallet server for the Lightning Network" property="og:description">
+    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel=icon href="../static/img/bolt-card-icon.png">
+    <link rel="Playstore" href="../static/img/android-app-download.png">
+    <link rel="Appstore" href="../static/img/ios-app-download.png">
+    <link rel="Appstore" href="../static/img/qr.png">
+    <title>BoltCard Service - Contactless Payment Card</title>
+    <meta content="lightning network, boltcard, nfc, payment" name="keywords">
+    <meta content="BoltCard server for the Lightning Network contactless payment card" name="description">
+</head>
+<body>
+<div class="holder">
+    <div class="container32">
+        <div class="logo">
+            {{.Template_data.Xml_prolog}}
+            <svg width="187px" height="49px" viewBox="0 0 187 49" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                <title>boltcard-logo</title>
+                <defs>
+                    <filter x="-26.2%" y="-25.6%" width="152.5%" height="151.2%" filterUnits="objectBoundingBox" id="filter-1">
+                        <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+                        <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+                        <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.109702797 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+                        <feMerge>
+                            <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                            <feMergeNode in="SourceGraphic"></feMergeNode>
+                        </feMerge>
+                    </filter>
+                    <linearGradient x1="50%" y1="2.83824061%" x2="50%" y2="100%" id="linearGradient-2">
+                        <stop stop-color="#174697" offset="0%"></stop>
+                        <stop stop-color="#0C2550" offset="100%"></stop>
+                    </linearGradient>
+                    <linearGradient x1="50%" y1="0%" x2="50%" y2="97.8843027%" id="linearGradient-3">
+                        <stop stop-color="#3F78DC" offset="0%"></stop>
+                        <stop stop-color="#2F5FB3" offset="100%"></stop>
+                    </linearGradient>
+                    <linearGradient x1="50%" y1="2.72534321%" x2="50%" y2="100%" id="linearGradient-4">
+                        <stop stop-color="#8BD7F9" offset="0%"></stop>
+                        <stop stop-color="#68BBE1" offset="100%"></stop>
+                    </linearGradient>
+                </defs>
+                <div id="BoltCard" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                    <img style="float:left; margin-right:20px;" width="80" src="../static/img/bolt-card-icon.png"/>
+                    <h1>BOLT CARD Service</h1>
+                </div>
+                <div style="margin-top: 20px; display: flex; flex-wrap: wrap;">
+                </div>
+            </svg>
+        </div>
+        <div class="scroll">
+        <div class="boxes">
+            {{$sta := .Stats_data}}
+            <div class="box container24">
+                <h3>Cards</h3>
+                <p class="meta">Active / All</p>
+                <span class="number1">{{$sta.num_active_cards}} / {{$sta.num_cards}}</span>
+            </div>
+            <div class="box container24">
+                <h3>Transactions Total</h3>
+                <p class="meta">Withdraw / Deposit (sats)</p>
+                <span class="number1">{{$sta.payments_total_sats}} / {{$sta.receipts_total_sats}}</span>
+            </div>
+            <div class="box container24">
+                <h3>Withdraw</h3>
+                <p class="meta">Transactions / Requests</p>
+                <span class="number1">{{$sta.num_succeeded_payments}} / {{$sta.num_payments}}</span>
+            </div>
+            <div class="box container24">
+                <h3>Deposit</h3>
+                <p class="meta">Transactions / Requests</p>
+                <span class="number1"> {{$sta.num_settled_deposit}} / {{$sta.num_deposit}}</span>
+            </div>
+        </div>
+        </div>
+
+        <h3>Cards</h3>
+        <div class="box container16">
+            <table class="table">
+                    <thead>
+                        <tr>
+                            <th class="name">Name</th>
+                            <th>Features</th>
+                            <th>Withdraw Limit</th>
+                            <th>Status</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{range .Cards_data}}
+                        <tr>
+                            <td>
+                                <div class="name">
+                                    <h2>{{.card_name}}</h2>
+                                    <span class="amount">UID:{{.uid}}</span>
+                                    <span class="amount"><br>{{if .email_address}}{{.email_address}}{{else}} No Email {{end}}</span>
+                                </div>
+                                <div class="name"></div>
+                            </td>
+                            <td>
+                                <div>Withdraw: {{eq .lnurlw_enable "Y"}}</div>
+                                <div>Deposit: {{eq .lnurlp_enable "Y"}}</div>
+                                <div>PIN: {{eq .pin_enable "Y"}}</div>
+                                <div>Negative balance: {{eq .allow_negative_balance "Y"}}</div>
+                            </td>
+                            <td>
+                                <div>{{.tx_limit_sats}} sats without PIN</div>
+                                <div>{{.pin_limit_sats}} sats with PIN</div>
+                                <div>{{.day_limit_sats}} sats per Day</div>
+                            </td>
+                            <td>
+                                <div>{{if ne .wiped "Y"}} Active {{else}} Deleted {{end}}</div>
+                                <div>counter: {{.last_counter_value}}</div>
+                                <div>Email notification: {{eq .email_enable "Y"}}</div>
+                            </td>
+                        </tr>
+                        {{else}}<tr><td style="align-self: center;" colspan="4">No cards exist in the database</td></tr> {{end}}
+                    </tbody>
+            </table>
+        </div>
+
+        <h3>Transaction</h3>
+        <div class="box container16">
+            <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Card Name</th>
+                            <th>Card ID</th>
+                            <th>Transactions ID</th>
+                            <th>Transactions Amount</th>
+                            <th>Transactions Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{range .Transactions_data}}
+                        <tr>
+                            <td>{{.card_name}}</td>
+                            <td>{{.card_id}}</td>
+                            <td>{{.tx_type}}</td>
+                            <td>{{.tx_amount_sats}} sats</td>
+                            <td>{{.tx_time}}</td>
+                        </tr>
+                        {{else}}<tr><td style="align-self: center;" colspan="5">No cards Transactions in the database</td></tr> {{end}}
+                    </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<div class="sidebar container32">
+    <div>
+        <p class="meta">Connect via QR code</p>
+    </div>
+    <img src="../static/img/qr.png" class="qr">
+    <div class="container32 nosidepadding">
+        <p class="meta">Node URI</p>
+        <p class="uri">{{.Template_data.Qr_connect_link}}</p>
+    </div>
+    <footer>
+        <div style="margin-top: 10px; display: flex; flex-direction: column;">
+            <a href="{{.Template_data.Android_app_link}}" target="_new" style="margin-bottom: 7px;">
+                <img src="../static/img/android-app-download.png" style="width: 200px; max-width: 100%;" alt="Google Playstore" />
+            </a>
+            <a href="{{.Template_data.Ios_app_link}}" target="_new">
+                <img src="../static/img/ios-app-download.png" style="width: 200px; max-width: 100%;" alt="Appstore" />
+            </a>
+        </div>
+        <p>Version: v{{.Template_data.Version_number}}</p>
+        <a href="https://github.com/boltcard" target="_blank">about</a> | 
+        <a href="https://t.me/bolt_card" target="_blank">community</a> 
+        | <a href="{{.Template_data.Settings_link}}">settings</a>
+</div>
+
+</body>
+</html>

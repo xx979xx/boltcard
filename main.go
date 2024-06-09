@@ -1,17 +1,16 @@
 package main
 
 import (
+	"net/http"
+	"time"
+
 	"github.com/boltcard/boltcard/db"
 	"github.com/boltcard/boltcard/internalapi"
 	"github.com/boltcard/boltcard/lnurlp"
 	"github.com/boltcard/boltcard/lnurlw"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
-	"net/http"
-	"time"
 )
-
-var router = mux.NewRouter()
 
 func main() {
 	log_level := db.Get_setting("LOG_LEVEL")
@@ -51,6 +50,8 @@ func main() {
 	// this has no authentication and is not to be exposed publicly
 	// it exists for use on a private virtual network within a docker container
 
+	internal_router.Path("/").HandlerFunc(internalapi.Dashboard)
+	internal_router.PathPrefix("/static/").Handler(http.FileServer(http.Dir("./")))
 	internal_router.Path("/ping").Methods("GET").HandlerFunc(internalapi.Internal_ping)
 	internal_router.Path("/createboltcard").Methods("GET").HandlerFunc(internalapi.Createboltcard)
 	internal_router.Path("/createboltcardwithpin").Methods("GET").HandlerFunc(internalapi.Createboltcardwithpin)
@@ -58,6 +59,7 @@ func main() {
 	internal_router.Path("/updateboltcardwithpin").Methods("GET").HandlerFunc(internalapi.Updateboltcardwithpin)
 	internal_router.Path("/wipeboltcard").Methods("GET").HandlerFunc(internalapi.Wipeboltcard)
 	internal_router.Path("/getboltcard").Methods("GET").HandlerFunc(internalapi.Getboltcard)
+	internal_router.Path("/getallboltcards").Methods("GET").HandlerFunc(internalapi.Getallboltcards)
 
 	port := db.Get_setting("HOST_PORT")
 	if port == "" {
