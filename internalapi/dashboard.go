@@ -10,28 +10,20 @@ import (
 	qrcode "github.com/skip2/go-qrcode"
 )
 
-type template_data struct {
-	Xml_prolog       template.HTML
-	Android_app_link string
-	Ios_app_link     string
-	Qr_connect_link  string
-	Version_number   string
-	Settings_link    string
-}
 type Dashboard_data struct {
 	Stats_data        map[string]int
 	Cards_data        []map[string]string
 	Transactions_data []map[string]string
 	Withdraws_data    []map[string]string
 	Deposits_data     []map[string]string
-	Template_data     template_data
+	Template_data     map[string]string
 }
 
-func make_qr_from_url(url string) {
+func make_qr_from_text(url string) {
 	err := qrcode.WriteFile(url, qrcode.Medium, 256, "static/img/qr.png")
 	if err != nil {
-		msg := "dashboard: Can not make qr"
-		log.Warn(msg)
+		msg := "dashboard: Can not make qr: "
+		log.Warn(msg, err)
 	}
 }
 
@@ -77,8 +69,8 @@ func (dat *Dashboard_data) getdashboarddata() {
 
 	payments, err := db.Get_all_payment()
 	if err != nil {
-		msg := "dashboard: Can not get withdraw data"
-		log.Warn(msg)
+		msg := "dashboard: Can not get withdraw data: "
+		log.Warn(msg, err)
 		return
 	}
 	dat.Stats_data["num_payments"] = len(payments)
@@ -119,8 +111,8 @@ func (dat *Dashboard_data) getdashboarddata() {
 
 	deposits, err := db.Get_all_deposit()
 	if err != nil {
-		msg := "dashboard: Can not get deposit data"
-		log.Warn(msg)
+		msg := "dashboard: Can not get deposit data: "
+		log.Warn(msg, err)
 		return
 	}
 	dat.Stats_data["num_deposit"] = len(deposits)
@@ -155,15 +147,14 @@ func (dat *Dashboard_data) getdashboarddata() {
 		}
 	}
 
-	dat.Template_data = template_data{
-		Xml_prolog:       "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
-		Android_app_link: "https://somelinea",
-		Ios_app_link:     "https://somelineb",
-		Qr_connect_link:  "https://somelinec",
-		Version_number:   "0.0.1",
-		Settings_link:    "/settings",
+	dat.Template_data = map[string]string{
+		"Android_app_link": "https://somelink-a",
+		"Ios_app_link":     "https://somelink-b",
+		"Qr_connect_link":  "https://somelink-c",
+		"Version_number":   "0.0.1",
+		"Settings_link":    "/settings",
 	}
-	make_qr_from_url("https://somelinec")
+	make_qr_from_text(dat.Template_data["Qr_connect_link"])
 }
 
 func Dashboard(w http.ResponseWriter, r *http.Request) {
