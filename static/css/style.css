@@ -133,6 +133,7 @@ body {
 }
 table{
 	width: 100%;
+	overflow: scroll;
 }
 tr {
 	padding: 8px 0;
@@ -159,6 +160,9 @@ tr .graph {
 tr .status {
 	align-self: center;
 	padding: 2px 8px 2px 4px;
+}
+tr .invoice{
+	word-break: break-all;
 }
 .decor {
 	text-decoration : none;
