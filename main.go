@@ -51,7 +51,7 @@ func main() {
 	// it exists for use on a private virtual network within a docker container
 
 	internal_router.Path("/").HandlerFunc(internalapi.Dashboard)
-	internal_router.PathPrefix("/static/").Handler(http.FileServer(http.Dir("./")))
+	internal_router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
 	internal_router.Path("/ping").Methods("GET").HandlerFunc(internalapi.Internal_ping)
 	internal_router.Path("/createboltcard").Methods("GET").HandlerFunc(internalapi.Createboltcard)
 	internal_router.Path("/createboltcardwithpin").Methods("GET").HandlerFunc(internalapi.Createboltcardwithpin)
